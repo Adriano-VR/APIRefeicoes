@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const fs = require('fs')
 const server = express();
 
 let id = 0;
@@ -9,7 +9,7 @@ server.use(cors());
 server.use(express.json()); 
 
 // Utilize process.env.PORT para a porta
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000 || 8080;
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -64,9 +64,14 @@ server.post('/add', (req, res) => {
     novaRefeicao.data = currentDate;
 
     // Add the new item to the data array
-    data.push(novaRefeicao);
+    data.push(novaRefeicao);+
+    salvarDados(data)
 
     // Return success response
     res.status(201).json({ message: "Item added successfully", newItem: novaRefeicao });
 });
 
+
+function salvarDados(dados) {
+    fs.writeFileSync(__dirname + "/data.json", JSON.stringify(dados, null, 2))
+}

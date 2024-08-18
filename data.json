@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Arroz",
+    "descricao": "gremio",
+    "data": "10/12/2023"
+  },
+  {
+    "id": 2,
+    "name": "Feijão",
+    "descricao": "gremio",
+    "data": "10/12/2023"
+  },
+  {
+    "id": 3,
+    "name": "Feijão",
+    "descricao": "gremio",
+    "data": "10/12/2023"
+  },
+  {
+    "titulo": "Feijão",
+    "descricao": "Grão rico em proteínas",
+    "id": 4,
+    "data": "18/08/2024"
+  }
+]
