@@ -53,7 +53,7 @@ server.post('/add', (req, res) => {
         const currentDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
         // Validação
-        if (!novaRefeicao.titulo || !novaRefeicao.descricao) {
+        if (!novaRefeicao.name || !novaRefeicao.descricao) {
             return res.status(400).json({ message: "Title and description are required" });
         }
 
