@@ -1,0 +1,16 @@
+{
+    "refeicoes": [
+        {
+            "id": 1,
+            "name": "Arroz",
+            "descricao": "gremio",
+            "data": "10/12/2023"
+        },
+        {
+            "id": 2,
+            "name": "Feijão",
+            "descricao": "gremio",
+            "data": "10/12/2023"
+        }
+    ]
+}
