@@ -1,19 +1,22 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');  // Importa a função para gerar UUIDs
 const server = express();
 
 server.use(cors());
 server.use(express.json()); 
 
 const PORT = process.env.PORT || 3000;
+const DATA_FILE = path.join(__dirname, 'data.json');
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
 // Carregando o arquivo correto
-let data = require("./data.json");
+let data = require(DATA_FILE);
 
 // Rota GET para buscar os itens
 server.get('/', (req, res) => {
@@ -54,9 +57,8 @@ server.post('/add', (req, res) => {
             return res.status(400).json({ message: "Name and description are required" });
         }
 
-        // Determina o último ID e atribui um novo
-        const ultimoId = data.length > 0 ? data[data.length - 1].id : 0;
-        novaRefeicao.id = ultimoId + 1;
+        // Gera um novo UUID para o novo item
+        novaRefeicao.id = uuidv4();
 
         // Atribui a data atual ao novo item
         novaRefeicao.data = currentDate;
@@ -81,7 +83,7 @@ server.delete('/delete/:id', (req, res) => {
         const { id } = req.params;
 
         // Remove o item com o ID especificado
-        data = data.filter(item => item.id !== parseInt(id));
+        data = data.filter(item => item.id !== id);
 
         // Salva os dados atualizados no arquivo
         salvarDados(data);
@@ -101,7 +103,7 @@ server.patch('/increment/:id', (req, res) => {
 
         // Atualiza o número de usuários para o item com o ID especificado
         data = data.map(item =>
-            item.id === parseInt(id) ? { ...item, users: item.users + 1 } : item
+            item.id === id ? { ...item, users: item.users + 1 } : item
         );
 
         // Salva os dados atualizados no arquivo
@@ -122,7 +124,7 @@ server.patch('/decrement/:id', (req, res) => {
 
         // Atualiza o número de usuários para o item com o ID especificado
         data = data.map(item =>
-            item.id === parseInt(id) ? { ...item, users: Math.max(item.users - 1, 0) } : item
+            item.id === id ? { ...item, users: Math.max(item.users - 1, 0) } : item
         );
 
         // Salva os dados atualizados no arquivo
@@ -137,5 +139,5 @@ server.patch('/decrement/:id', (req, res) => {
 });
 
 function salvarDados(dados) {
-    fs.writeFileSync(__dirname + "/data.json", JSON.stringify(dados, null, 2));
+    fs.writeFileSync(DATA_FILE, JSON.stringify(dados, null, 2));
 }
