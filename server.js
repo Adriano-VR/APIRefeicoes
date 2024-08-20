@@ -194,9 +194,55 @@ server.patch('/decrement/:id', (req, res) => {
     }
 });
 
+// Rota DELETE para apagar um item específico do histórico
+server.delete('/historico/delete/:id', (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Remove o item do histórico com o ID especificado
+        const historicoIndex = data.historico.findIndex(historico => historico.id === id);
+        if (historicoIndex === -1) {
+            return res.status(404).json({ message: "Historical item not found" });
+        }
+
+        data.historico.splice(historicoIndex, 1);
+
+        // Salva os dados atualizados no arquivo
+        salvarDados(data);
+
+        // Retorna resposta de sucesso
+        res.status(200).json({ message: "Historical item deleted successfully" });
+    } catch (error) {
+        console.error("Erro ao deletar o item do histórico: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// Rota DELETE para apagar todos os itens do histórico
+server.delete('/historico/delete-all', (req, res) => {
+    try {
+        // Limpa o array de histórico
+        data.historico = [];
+
+        // Salva os dados atualizados no arquivo
+        salvarDados(data);
+
+        // Retorna resposta de sucesso
+        res.status(200).json({ message: "All historical items deleted successfully" });
+    } catch (error) {
+        console.error("Erro ao deletar todos os itens do histórico: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
 
 // Rota GET para buscar o histórico
 server.get('/historico', (req, res) => {
+
+    if (data.historico.length === 0) {
+        return res.status(404).json({ message: "O Histórico esta Vazio" });
+    }
     res.json({
         items: data.historico
     });
