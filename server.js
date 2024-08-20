@@ -25,23 +25,36 @@ function salvarDados(dados) {
 
 // Função para salvar o histórico com nome e descrição do item apenas para ações de "add"
 function salvarHistorico(itemId) {
-    let historicoItem = {
-        id: uuidv4(),
-        itemId,
-    };
+    const item = data.items.find(item => item.id === itemId);
 
-  
-        const item = data.items.find(item => item.id === itemId);
-        historicoItem.name = item ? item.name : 'Desconhecido';
-        historicoItem.descricao = item ? item.descricao : 'Desconhecido';
-        historicoItem.data = item ? item.data : 'Desconhecido';
-        historicoItem.users = item ? item.users : 0
-        
-    
+    // Procura um item no histórico para atualizar
+    const historicoIndex = data.historico.findIndex(historico => historico.itemId === itemId);
 
-    data.historico.push(historicoItem);
+    if (historicoIndex >= 0) {
+        // Atualiza o histórico existente com as novas informações
+        data.historico[historicoIndex] = {
+            ...data.historico[historicoIndex],
+            users: item.users,
+            data: item.data
+        };
+    } else {
+        // Adiciona um novo histórico se não existir um para o itemId
+        const historicoItem = {
+            id: uuidv4(),
+            itemId,
+            name: item.name,
+            descricao: item.descricao,
+            data: item.data,
+            users: item.users
+        };
+        data.historico.push(historicoItem);
+    }
+
     salvarDados(data);
 }
+
+
+
 
 // Rota GET para buscar os itens
 server.get('/', (req, res) => {
@@ -134,16 +147,19 @@ server.patch('/increment/:id', (req, res) => {
     try {
         const { id } = req.params;
 
-        // Atualiza o número de usuários para o item com o ID especificado
         const item = data.items.find(item => item.id === id);
         if (!item) {
             return res.status(404).json({ message: "Item not found" });
         }
 
+        // Atualiza o número de usuários
         item.users += 1;
 
         // Salva os dados atualizados no arquivo
         salvarDados(data);
+
+        // Salva o histórico com os dados atualizados
+        salvarHistorico(id);
 
         res.status(200).json({ message: "User count incremented successfully" });
     } catch (error) {
@@ -152,30 +168,32 @@ server.patch('/increment/:id', (req, res) => {
     }
 });
 
-// Rota PATCH para decrementar o número de usuários
+
 server.patch('/decrement/:id', (req, res) => {
     try {
         const { id } = req.params;
 
-        // Atualiza o número de usuários para o item com o ID especificado
         const item = data.items.find(item => item.id === id);
         if (!item) {
             return res.status(404).json({ message: "Item not found" });
         }
 
+        // Atualiza o número de usuários
         item.users = Math.max(item.users - 1, 0);
 
         // Salva os dados atualizados no arquivo
         salvarDados(data);
 
-      
-        // Retorna resposta de sucesso
+        // Salva o histórico com os dados atualizados
+        salvarHistorico(id);
+
         res.status(200).json({ message: "User count decremented successfully" });
     } catch (error) {
         console.error("Erro ao decrementar usuários: ", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
 
 // Rota GET para buscar o histórico
 server.get('/historico', (req, res) => {
