@@ -18,6 +18,20 @@ server.listen(PORT, () => {
 // Carregando o arquivo de dados
 let data = require(DATA_FILE);
 
+// Lista de versões bloqueadas
+const blockedVersions = ["1.0.0"];
+
+// Endpoint que verifica se a versão é permitida
+server.get('/api/check-version', (req, res) => {
+    const { version } = req.query;
+
+    if (blockedVersions.includes(version)) {
+        res.status(403).json({ message: 'Versão não permitida. Atualize o aplicativo.' });
+    } else {
+        res.status(200).json({ message: 'Versão permitida.' });
+    }
+});
+
 // Função para salvar os dados no arquivo
 function salvarDados(dados) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(dados, null, 2));
@@ -54,10 +68,8 @@ function salvarHistorico(itemId) {
 }
 
 
-
-
 // Rota GET para buscar os itens
-server.get('/', (req, res) => {
+server.get('/home', (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const itemsPerPage = parseInt(req.query.itemsPerPage) || 20;
     const search = req.query.search || "";
@@ -85,7 +97,7 @@ server.get('/', (req, res) => {
 });
 
 // Rota POST para adicionar um novo item
-server.post('/add', (req, res) => {
+server.post('/adicionar', (req, res) => {
     try {
         const novaRefeicao = req.body;
         const currentDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -119,7 +131,7 @@ server.post('/add', (req, res) => {
 });
 
 // Rota DELETE para apagar um item
-server.delete('/delete/:id', (req, res) => {
+server.delete('/apagar/:id', (req, res) => {
     try {
         const { id } = req.params;
 
@@ -143,7 +155,7 @@ server.delete('/delete/:id', (req, res) => {
     }
 });
 
-server.patch('/increment/:id', (req, res) => {
+server.patch('/incrementar/:id', (req, res) => {
     try {
         const { id } = req.params;
 
@@ -168,8 +180,7 @@ server.patch('/increment/:id', (req, res) => {
     }
 });
 
-
-server.patch('/decrement/:id', (req, res) => {
+server.patch('/decrementar/:id', (req, res) => {
     try {
         const { id } = req.params;
 
@@ -195,7 +206,7 @@ server.patch('/decrement/:id', (req, res) => {
 });
 
 // Rota DELETE para apagar um item específico do histórico
-server.delete('/historico/delete/:id', (req, res) => {
+server.delete('/historico/apagar/:id', (req, res) => {
     try {
         const { id } = req.params;
 
@@ -219,7 +230,7 @@ server.delete('/historico/delete/:id', (req, res) => {
 });
 
 // Rota DELETE para apagar todos os itens do histórico
-server.delete('/historico/delete-all', (req, res) => {
+server.delete('/historico/deletar-all', (req, res) => {
     try {
         // Limpa o array de histórico
         data.historico = [];
@@ -235,10 +246,8 @@ server.delete('/historico/delete-all', (req, res) => {
     }
 });
 
-
-
 // Rota GET para buscar o histórico
-server.get('/historico', (req, res) => {
+server.get('/gethistorico', (req, res) => {
 
     if (data.historico.length === 0) {
         return res.status(404).json({ message: "O Histórico esta Vazio" });
