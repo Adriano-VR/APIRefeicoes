@@ -22,8 +22,9 @@ let data = require(DATA_FILE);
 const blockedVersions = ["1.0.0"];
 
 // Endpoint que verifica se a versão é permitida
-server.get('/api/check-version', (req, res) => {
-    const { version } = req.query;
+// Update your endpoint to handle POST requests
+server.post('/api/check-version', (req, res) => {
+    const { version } = req.body; // Use req.body instead of req.query
 
     if (blockedVersions.includes(version)) {
         res.status(403).json({ message: 'Versão não permitida. Atualize o aplicativo.' });
@@ -31,6 +32,7 @@ server.get('/api/check-version', (req, res) => {
         res.status(200).json({ message: 'Versão permitida.' });
     }
 });
+
 
 // Função para salvar os dados no arquivo
 function salvarDados(dados) {

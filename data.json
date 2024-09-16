@@ -1,21 +1,4 @@
 {
-  "items": [
-    {
-      "name": "gg",
-      "descricao": "gg",
-      "users": 1,
-      "id": "da1beb96-d54a-4a01-a88d-7a7db485e0cd",
-      "data": "29/08/2024"
-    }
-  ],
-  "historico": [
-    {
-      "id": "5dc3f80d-4ed0-46b3-a4d1-1417e8435b09",
-      "itemId": "da1beb96-d54a-4a01-a88d-7a7db485e0cd",
-      "name": "gg",
-      "descricao": "gg",
-      "data": "29/08/2024",
-      "users": 1
-    }
-  ]
+  "items": [],
+  "historico": []
 }
